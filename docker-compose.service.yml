@@ -1,0 +1,54 @@
+version: '3'
+services:
+  tsingoj-backend-gateway:
+    container_name: tsingoj-backend-gateway
+    build:
+      context: ./tsingoj-backend-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8101:8101"
+    networks:
+      - mynetwork
+
+  tsingoj-backend-user-service:
+    container_name: tsingoj-backend-user-service
+    build:
+      context: ./tsingoj-backend-user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8102"
+    networks:
+      - mynetwork
+    depends_on:
+      - tsingoj-backend-gateway
+
+  tsingoj-backend-question-service:
+    container_name: tsingoj-backend-question-service
+    build:
+      context: ./tsingoj-backend-question-service
+      dockerfile: Dockerfile
+    ports:
+      - "8103:8103"
+    networks:
+      - mynetwork
+    depends_on:
+      - tsingoj-backend-user-service
+      - tsingoj-backend-gateway
+
+  tsingoj-backend-judge-service:
+    container_name: tsingoj-backend-judge-service
+    build:
+      context: ./tsingoj-backend-judge-service
+      dockerfile: Dockerfile
+    ports:
+      - "8104:8104"
+    networks:
+      - mynetwork
+    depends_on:
+      - tsingoj-backend-user-service
+      - tsingoj-backend-question-service
+      - tsingoj-backend-gateway
+
+# 网络，不定义的话就是默认网络
+networks:
+  mynetwork:
