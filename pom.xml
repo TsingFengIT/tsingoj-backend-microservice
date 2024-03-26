@@ -7,7 +7,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>tsingoj-backend-microservice</name>
-    <description>鱼 OJ 项目</description>
+    <description>Tsing OJ 项目</description>
     <modules>
         <module>tsingoj-backend-common</module>
         <module>tsingoj-backend-model</module>

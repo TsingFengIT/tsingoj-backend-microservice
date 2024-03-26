@@ -1,5 +1,6 @@
 package com.Tsing.tsingojbackendquestionservice.service.impl;
 
+import com.Tsing.tsingojbackendmodel.model.vo.UserVO;
 import com.Tsing.tsingojbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,6 +22,7 @@ import com.Tsing.tsingojbackendquestionservice.service.QuestionService;
 import com.Tsing.tsingojbackendquestionservice.service.QuestionSubmitService;
 import com.Tsing.tsingojbackendserviceclient.service.JudgeFeignClient;
 import com.Tsing.tsingojbackendserviceclient.service.UserFeignClient;
+import org.apache.catalina.connector.Request;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
-* @author 李鱼皮
+* @author 清风
 * @description 针对表【question_submit(题目提交)】的数据库操作Service实现
 * @createDate 2023-08-07 20:58:53
 */
@@ -52,6 +54,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
     @Resource
     private MyMessageProducer myMessageProducer;
+
 
     /**
      * 提交题目
@@ -133,6 +136,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Override
     public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
+        //获取问题详情
+        questionSubmitVO.setQuestionVO(questionService.getQuestionVO(questionService.getById(questionSubmitVO.getQuestionId()),new Request(null)));
+        //获取用户信息
+        UserVO userVO = userFeignClient.getUserVO(userFeignClient.getById(questionSubmitVO.getUserId()));
+        questionSubmitVO.setUserVO(userVO);
+
         // 脱敏：仅本人和管理员能看见自己（提交 userId 和登录用户 id 不同）提交的代码
         long userId = loginUser.getId();
         // 处理脱敏

@@ -13,16 +13,30 @@ public class InitRabbitMq {
 
     public static void doInit() {
         try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
-            String EXCHANGE_NAME = "code_exchange";
-            channel.exchangeDeclare(EXCHANGE_NAME, "direct");
 
-            // 创建队列，随机分配一个队列名称
+            // 1.建立连接
+            ConnectionFactory factory = new ConnectionFactory();
+            // 1.1.设置连接参数，分别是：主机名、端口号、vhost、用户名、密码
+            factory.setHost("182.92.202.251");
+            factory.setPort(5672);
+            factory.setVirtualHost("/");
+            factory.setUsername("admin");
+            factory.setPassword("admin");
+            // 1.2.建立连接
+            Connection connection = factory.newConnection();
+
+            // 2.创建通道Channel
+            Channel channel = connection.createChannel();
+
+            String EXCHANGE_NAME = "code_exchange";
+            // 3.创建队列
             String queueName = "code_queue";
+
+//        String queueName = "simple.queue1";
+            channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             channel.queueDeclare(queueName, true, false, false, null);
+
+//        channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, EXCHANGE_NAME, "my_routingKey");
             log.info("消息队列启动成功");
         } catch (Exception e) {

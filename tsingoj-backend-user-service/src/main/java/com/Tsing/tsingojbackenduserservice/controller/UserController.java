@@ -1,5 +1,8 @@
 package com.Tsing.tsingojbackenduserservice.controller;
 
+import com.Tsing.tsingojbackendcommon.constant.JwtClaimsConstant;
+import com.Tsing.tsingojbackendcommon.properties.JwtProperties;
+import com.Tsing.tsingojbackendcommon.utils.JwtUtil;
 import com.Tsing.tsingojbackendmodel.model.dto.user.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.Tsing.tsingojbackendcommon.annotation.AuthCheck;
@@ -21,7 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户接口
@@ -38,6 +44,8 @@ public class UserController {
     private UserService userService;
 
     // region 登录相关
+    @Resource
+    private JwtProperties jwtProperties;
 
     /**
      * 用户注册
@@ -78,6 +86,15 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+        //登录成功后，生成jwt令牌
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put(JwtClaimsConstant.EMP_ID, loginUserVO.getId());
+//        String token = JwtUtil.createJWT(
+//                jwtProperties.getAdminSecretKey(),
+//                jwtProperties.getAdminTtl(),
+//                claims);
+//        loginUserVO.setToken(token);
+
         return ResultUtils.success(loginUserVO);
     }
 
@@ -105,7 +122,18 @@ public class UserController {
     @GetMapping("/get/login")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
-        return ResultUtils.success(userService.getLoginUserVO(user));
+
+        LoginUserVO loginUserVO = userService.getLoginUserVO(user);
+        //登录成功后，生成jwt令牌
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.EMP_ID, loginUserVO.getId());
+        String token = JwtUtil.createJWT(
+                jwtProperties.getAdminSecretKey(),
+                jwtProperties.getAdminTtl(),
+                claims);
+        loginUserVO.setToken(token);
+
+        return ResultUtils.success(loginUserVO);
     }
 
     // endregion

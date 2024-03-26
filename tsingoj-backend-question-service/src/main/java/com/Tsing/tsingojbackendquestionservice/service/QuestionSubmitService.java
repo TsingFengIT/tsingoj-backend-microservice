@@ -11,7 +11,7 @@ import com.Tsing.tsingojbackendmodel.model.entity.User;
 import com.Tsing.tsingojbackendmodel.model.vo.QuestionSubmitVO;
 
 /**
-* @author 李鱼皮
+* @author 清风
 * @description 针对表【question_submit(题目提交)】的数据库操作Service
 * @createDate 2023-08-07 20:58:53
 */
