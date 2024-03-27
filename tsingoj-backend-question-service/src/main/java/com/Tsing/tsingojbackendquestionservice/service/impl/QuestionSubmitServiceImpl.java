@@ -119,8 +119,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Integer status = questionSubmitQueryRequest.getStatus();
         Long questionId = questionSubmitQueryRequest.getQuestionId();
         Long userId = questionSubmitQueryRequest.getUserId();
-        String sortField = questionSubmitQueryRequest.getSortField();
-        String sortOrder = questionSubmitQueryRequest.getSortOrder();
+        String sortField = "createTime";
+        String sortOrder = CommonConstant.SORT_ORDER_DESC;
 
         // 拼接查询条件
         queryWrapper.eq(StringUtils.isNotBlank(language), "language", language);
